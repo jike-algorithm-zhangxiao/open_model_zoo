@@ -73,7 +73,7 @@ class NumPyReader(BaseReader):
         if self.separator:
             field_id, data_id = str(data_id).split(self.separator)
         data_path = self.data_source / data_id if self.data_source is not None else data_id
-
+        data_path = str(data_path).replace('label', 'input')
         data = np.load(str(data_path))
 
         if not isinstance(data, NpzFile):

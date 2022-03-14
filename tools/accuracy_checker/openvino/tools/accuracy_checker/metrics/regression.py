@@ -44,7 +44,9 @@ from ..representation import (
     BackgroundMattingPrediction,
     NiftiRegressionAnnotation,
     HandLandmarksAnnotation,
-    HandLandmarksPrediction
+    HandLandmarksPrediction,
+    RawTensorAnnotation,
+    RawTensorPrediction
 )
 
 from .metric import PerImageEvaluationMetric
@@ -55,10 +57,10 @@ from ..utils import string_to_tuple, finalize_metric_result, contains_all
 class BaseRegressionMetric(PerImageEvaluationMetric):
     annotation_types = (
         RegressionAnnotation, FeaturesRegressionAnnotation, DepthEstimationAnnotation, ImageProcessingAnnotation,
-        BackgroundMattingAnnotation, NiftiRegressionAnnotation,
+        BackgroundMattingAnnotation, NiftiRegressionAnnotation, RawTensorAnnotation
     )
     prediction_types = (
-        RegressionPrediction, DepthEstimationPrediction, ImageProcessingPrediction, BackgroundMattingPrediction,
+        RegressionPrediction, DepthEstimationPrediction, ImageProcessingPrediction, BackgroundMattingPrediction, RawTensorPrediction
     )
 
     def __init__(self, value_differ, *args, **kwargs):
@@ -594,7 +596,7 @@ def calculate_distance(x_coords, y_coords, selected_points):
 
 
 def mae_differ(annotation_val, prediction_val):
-    return np.abs(annotation_val - prediction_val)
+    return np.abs(annotation_val - prediction_val.reshape(1,293,4))
 
 def mse_differ(annotation_val, prediction_val):
     return (annotation_val - prediction_val) ** 2

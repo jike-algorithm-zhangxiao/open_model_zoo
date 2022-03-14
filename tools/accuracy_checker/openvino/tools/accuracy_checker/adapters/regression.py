@@ -49,6 +49,7 @@ class RegressionAdapter(Adapter):
         """
         predictions = self._extract_predictions(raw, frame_meta)
         self.select_output_blob(predictions)
+        self.output_blob = 'outputs'
         predictions = predictions[self.output_blob]
         if len(np.shape(predictions)) == 1 or (self.keep_shape and np.shape(predictions)[0] != len(identifiers)):
             predictions = np.expand_dims(predictions, axis=0)

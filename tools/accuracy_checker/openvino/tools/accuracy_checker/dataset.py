@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+import os
 from copy import deepcopy
 from pathlib import Path
 from collections import OrderedDict
@@ -49,13 +49,14 @@ from .utils import (
 from .representation import (
     BaseRepresentation, ReIdentificationClassificationAnnotation,
     ReIdentificationAnnotation, PlaceRecognitionAnnotation,
-    SentenceSimilarityAnnotation
+    SentenceSimilarityAnnotation, RawTensorAnnotation
 )
 from .data_readers import (
     DataReaderField, REQUIRES_ANNOTATIONS, BaseReader,
     serialize_identifier, deserialize_identifier, create_ann_identifier_key
 )
 from .logging import print_info
+import numpy as np
 
 MODULES_RENAMING = {
                     'accuracy_checker': 'openvino.tools.accuracy_checker',
@@ -159,11 +160,18 @@ class Dataset:
         if 'annotation' in config:
             annotation_file = Path(config['annotation'])
             if annotation_file.exists():
-                if log:
-                    print_info('Annotation for {dataset_name} dataset will be loaded from {file}'.format(
-                        dataset_name=config['name'], file=annotation_file))
-                annotation = read_annotation(get_path(annotation_file), log)
-                meta = Dataset.load_meta(config)
+                # if log:
+                #     print_info('Annotation for {dataset_name} dataset will be loaded from {file}'.format(
+                #         dataset_name=config['name'], file=annotation_file))
+                # annotation = read_annotation(get_path(annotation_file), log)
+                # meta = Dataset.load_meta(config)
+
+                # 对音频的进行改写
+                annotation = []
+                for a_file in os.listdir(annotation_file):
+                    annotation.append(RawTensorAnnotation(a_file, np.load(os.path.join(annotation_file, a_file))))
+                    print(a_file, 'success')
+
                 use_converted_annotation = False
 
         if not annotation and 'annotation_conversion' in config:

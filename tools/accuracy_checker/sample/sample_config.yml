@@ -4,7 +4,7 @@ models:
     # list of launchers for your topology.
     launchers:
       # launcher framework (e.g. caffe, openvino)
-      - framework: openvino
+      - framework: dlsdk
         # device for infer (e.g. for openvino cpu, gpu, hetero:cpu,gpu ...)
         device: CPU
         # model topology file (.xml, .onnx, e.t.c.)
@@ -15,7 +15,7 @@ models:
         weights: SampLeNet.bin
         # launcher returns raw result, so it should be converted
         # to an appropriate representation with adapter
-        adapter: classification
+        adapter: regression
         # batch size
         batch: 1
 
@@ -70,5 +70,23 @@ models:
 
         # list of metrics, calculated on dataset
         metrics:
-          - type: accuracy
-            top_k: 1
+          - type: mae
+
+
+
+models:
+  - name: audio_seg_bs_1
+    launchers:
+      - framework: dlsdk
+        device: cpu
+        adapter: regression
+        model: /Users/zhangxiao/PycharmProjects/audio/open_model_zoo/tools/accuracy_checker/fp32/audio_seg_bs_1.xml
+        weights: /Users/zhangxiao/PycharmProjects/audio/open_model_zoo/tools/accuracy_checker/fp32/audio_seg_bs_1.bin
+
+    datasets:
+      - name: audio_seg_data
+        reader: numpy_reader
+        annotation: /Users/zhangxiao/PycharmProjects/audio/open_model_zoo/tools/accuracy_checker/fp32/dataset/label
+        data_source: /Users/zhangxiao/PycharmProjects/audio/open_model_zoo/tools/accuracy_checker/fp32/dataset/data
+        metrics:
+          - type: mae

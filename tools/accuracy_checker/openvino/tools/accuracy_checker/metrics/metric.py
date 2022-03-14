@@ -244,6 +244,7 @@ class Metric(ClassProvider):
 
 class PerImageEvaluationMetric(Metric):
     def submit(self, annotation, prediction):
+        # prediction = {'outputs': prediction['outputs']}
         annotation_, prediction_ = self._resolve_representation_containers(annotation, prediction)
         metric_result = self.update(annotation_, prediction_)
         direction = self.meta.get('target', 'higher-better')
